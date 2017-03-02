@@ -1,9 +1,4 @@
 require 'pry'
-#MASTERMIND draft
-#Enum for element checker in place
-#Enum for position checker needed
-# some cleanup started
-
 
 class OneBigClass
   attr_reader  :player_choice , :guess, :formatted_guess, :seed_array, :secret_code, :start_time, :finish_time, :attempts
@@ -54,7 +49,6 @@ class OneBigClass
 
   def play
     start_time = Time.new
-    # creates a super secret code from the seed array
     @secret_code = seed_array.sample(4).flatten
 
     puts "I have generated a beginner sequence with four elements made up of: (r)ed,
@@ -66,7 +60,6 @@ class OneBigClass
     guess_checker(formatted_guess)
   end
 
-#is it a valid guess?
   def guess_checker(formatted_guess)
     @attempts += 1
     correct_elements = 0
@@ -87,21 +80,21 @@ class OneBigClass
   def element_checker
       seed_array.each do |check_variable|
 
-      if formatted_guess.count(check_variable) > 0
+      if @formatted_guess.count(check_variable) > 0
         #v perfect v
-        if formatted_guess.count(check_variable) == secret_code.count(check_variable)
-           @correct_elements += @guess.count(check_variable)
+        if @formatted_guess.count(check_variable) == @secret_code.count(check_variable)
+           @correct_elements += @formatted_guess.count(check_variable)
         # v not there at all v
-        elsif secret_code.count(check_variable) == 0
-          correct_elements
+      elsif @secret_code.count(check_variable) == 0
+          @correct_elements
           # v more in guess v
-        elsif formatted_guess.count(check_variable) > secret_code.count(check_variable)
+        elsif @formatted_guess.count(check_variable) > secret_code.count(check_variable)
           @correct_elements += @secret_code.count(check_variable)
           # v more in secret v
-        elsif formatted_guess.count(check_variable) < secret_code.count(check_variable)
+        elsif @formatted_guess.count(check_variable) < @secret_code.count(check_variable)
           @correct_elements += @formatted_guess.count(check_variable)
         else
-          correct_elements
+          @correct_elements
         end
       end
     end
@@ -152,5 +145,4 @@ class OneBigClass
     abort("Thank you!")
   end
 end
-# #^end of class^
 OneBigClass.new
