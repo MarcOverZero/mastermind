@@ -1,7 +1,8 @@
 require 'pry'
 
 class OneBigClass
-  attr_reader  :player_choice , :guess, :seed_array, :secret_code, :start_time, :finish_time, :attempts
+  attr_reader  :player_choice , :guess, :formatted_guess, :seed_array, :secret_code, :start_time, :finish_time, :attempts
+  
   def initialize
       @player_choice = ""
       @guess = []
@@ -13,17 +14,18 @@ class OneBigClass
       @secret_code = []
       @start_time = ""
       @finish_time = ""
+      @formatted_guess = nil
       welcome
   end
 
   def welcome
     puts "Welcome to MASTERMIND\nWould you like to (p)lay, read the (i)nstructions, or (q)uit?"
     player_choice = gets.chomp.downcase
-    if player_choice.include?("p")
+    if player_choice == "play" || player_choice ==  "p" || player_choice == "(p)"
       play
-    elsif player_choice.include?("i")
+    elsif player_choice ==  "instructions" || player_choice == "i" || player_choice == "(i)"
       instructions
-    elsif player_choice.include?("q")
+    elsif player_choice ==  "quit" || player_choice == "q" || player_choice == "(q)"
       quit
     else
       puts "Invalid entry"
@@ -34,11 +36,11 @@ class OneBigClass
   def instructions
     puts "Welcome to MASTERMIND Instructions. MASTERMIND will randomly select a four character Secret Code. Your job is to guess that code! MASTERMIND will let you know if your guess is close, and how close.\n Would you like to (p)lay, or (q)uit?"
     player_choice = gets.chomp.downcase
-    if guess.join.include?("p")
+    if player_choice == "play" || player_choice ==  "p" || player_choice == "(p)"
       play
-    elsif guess.join.include?("i")
+    elsif player_choice ==  "instructions" || player_choice == "i" || player_choice == "(i)"
       instructions
-    elsif guess.join.include?("q")
+    elsif player_choice ==  "quit" || player_choice == "q" || player_choice == "(q)"
       quit
     else
       puts "Invalid entry"
@@ -52,28 +54,30 @@ class OneBigClass
     puts "I have generated a beginner sequence with four elements made up of: (r)ed,
     # (g)reen, (b)lue, and (y)ellow."
 
-    @guess = gets.chomp.downcase.split(//)
 
-    guess_checker
+# @guess = gets.chomp.downcase.split(//).flatten
+    guess = gets.chomp.downcase.split(//)
+    @formatted_guess = guess.flatten
+
+    guess_checker(formatted_guess)
   end
 
   def filter
     puts "What's your next guess?"
-    @guess = gets.chomp.downcase.split(//)
-    guess_checker
+    guess << gets.chomp.downcase.split(//)
+    @formatted_guess = guess.flatten
+    guess_checker(formatted_guess)
   end
 
-  def guess_checker
-    binding.pry
-
+  def guess_checker(formatted_guess)
     @attempts += 1
     correct_elements = 0
     correct_positions = 0
-    if guess == secret_code
+    if formatted_guess == secret_code
       win
-    elsif guess.join.include?("q")
+    elsif formatted_guess ==  "quit" || formatted_guess == "q" || formatted_guess == "(q)"
       quit
-    elsif guess.length == 4
+    elsif formatted_guess.count == 4
       guess_feedback
     else
       puts "Invalid guess."
@@ -85,19 +89,19 @@ class OneBigClass
   def element_checker
       @seed_array.each do |check_variable|
 
-      if @guess.count(check_variable) > 0
+      if @formatted_guess.count(check_variable) > 0
         #v perfect v
-        if @guess.count(check_variable) == @secret_code.count(check_variable)
-           @correct_elements += @guess.count(check_variable)
+        if @formatted_guess.count(check_variable) == @secret_code.count(check_variable)
+           @correct_elements += @formatted_guess.count(check_variable)
         # v not there at all v
         elsif @secret_code.count(check_variable) == 0
           @correct_elements
           # v more in guess v
-        elsif @guess.count(check_variable) > @secret_code.count(check_variable)
+        elsif @formatted_guess.count(check_variable) > @secret_code.count(check_variable)
           @correct_elements += @secret_code.count(check_variable)
           # v more in secret v
-        elsif @guess.count(check_variable) < @secret_code.count(check_variable)
-          @correct_elements += @guess.count(check_variable)
+        elsif @formatted_guess.count(check_variable) < @secret_code.count(check_variable)
+          @correct_elements += @formatted_guess.count(check_variable)
         else
           @correct_elements
         end
@@ -109,7 +113,7 @@ class OneBigClass
 
 #element position checker should probably be a 2 argument enum... would make dynamic scaling for difficulty easier
   def element_position_checker
-    zipped_comparison = secret_code.zip(guess).flatten
+    zipped_comparison = secret_code.zip(formatted_guess).flatten
     if zipped_comparison[0] == zipped_comparison[1]
       @correct_positions += 1
     end
@@ -138,9 +142,9 @@ class OneBigClass
     # vv this Time formatting is junky, look into cleanup
     puts "Congratulations! You guessed the secret code #{secret_code} in #{attempts} guesses over #{time_taken.to_i} seconds.\nDo you want to (p)lay again or (q)uit?"
     player_choice = gets.chomp.downcase
-    if guess.join.include?("p")
+    if player_choice == "play" || player_choice ==  "p" || player_choice == "(p)"
       play
-    elsif guess.join.include?("q")
+    elsif player_choice ==  "quit" || player_choice == "q" || player_choice == "(q)"
       quit
     else
       puts "Invalid entry"
@@ -154,4 +158,5 @@ class OneBigClass
     abort("Thank you!")
   end
 end
+
 OneBigClass.new

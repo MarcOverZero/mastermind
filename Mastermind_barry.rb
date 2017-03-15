@@ -5,7 +5,7 @@ class OneBigClass
   def initialize
       @player_choice = ""
       @guess = []
-      @seed_array = ["r","g","b","y",]
+      @seed_array 
       # for difficulty may be easier to just have 3 diff seed arrays (w/ 6 & 8 variables). would also need to adjust sample (4)- be careful element_checker method
       @attempts = 0
       @correct_elements = 0
